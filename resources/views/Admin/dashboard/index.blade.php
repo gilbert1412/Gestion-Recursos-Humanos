@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>@yield('title','Pagina Principal')</title>
+    <title>@yield('nombreVista','Pagina Principal')</title>
     @yield('css')
     <!--begin::Theme Init (prevents flash of incorrect theme on load, #6043)-->
     <script>
@@ -313,9 +313,9 @@
                 </ul>
               </li>
               <li class="nav-item">
-                <a href="./starter.html" class="nav-link active">
+                <a href="{{route('empleado')}}" class="nav-link active">
                   <i class="nav-icon bi bi-file-earmark"></i>
-                  <p>Starter Page</p>
+                  <p>Empleados</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -344,7 +344,7 @@
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h1 class="mb-0 fs-3">Starter Page</h1>
+                <h1 class="mb-0 fs-3">@yield('nombreVista')</h1>
               </div>
               <div class="col-sm-6">
                 <nav aria-label="breadcrumb">
