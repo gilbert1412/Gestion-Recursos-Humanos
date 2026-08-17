@@ -21,8 +21,24 @@ class Empleado extends Model
     ];
     
     #[Scope]
-    protected function activos(Builder $query):void{
-        $query->where('estado','ACTIVADO');
+    protected function activos(Builder $query, ?string $buscar = null): void
+    {
+        $query->where('estado', 'ACTIVO');
+        if (!empty($buscar)) {
+            $query->where(function ($q) use ($buscar) {
+                $q->where('numero_documento', 'like', "%{$buscar}%")
+                ->orWhere('nombre_completo', 'like', "%{$buscar}%")
+                ->orWhere('apellidos_completos', 'like', "%{$buscar}%")
+                ->orWhereRaw(
+                    "CONCAT(nombre_completo, ' ', apellidos_completos) LIKE ?",
+                    ["%{$buscar}%"]
+                )
+                ->orWhere('fecha_ingreso', 'like', "%{$buscar}%")
+                ->orWhere('estado', 'like', "%{$buscar}%");
+            });
+        }
+
+        
     }
 
 }

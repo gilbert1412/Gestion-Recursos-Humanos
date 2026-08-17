@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Empleado;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 new class extends Component {
@@ -11,21 +12,24 @@ new class extends Component {
     public $telefono;
     public $fecha_ingreso;
     public $id_empleado;
+    public $estado;
 
-    public function validarDatos() {
+    public function validarDatos()
+    {
         $this->validate([
-            'numero_documento' => 'required|string|max:15|unique:empleados,numero_documento,'.$this->id_empleado,
+            'numero_documento' => 'required|string|max:15|unique:empleados,numero_documento,' . $this->id_empleado,
             'nombre_completo' => 'required|string|max:100',
             'apellidos_completos' => 'required|string|max:100',
-            'email' => 'required|email|max:255|unique:empleados,email,'.$this->id_empleado,
+            'email' => 'required|email|max:255|unique:empleados,email,' . $this->id_empleado,
             'telefono' => 'nullable|string|max:20',
             'fecha_ingreso' => 'required|date',
         ]);
     }
-    public function registrarEmpleado() {
+    public function registrarEmpleado()
+    {
         $this->validarDatos();
-    
-        if(isset($this->id_empleado)) {
+
+        if (isset($this->id_empleado)) {
             $empleado = Empleado::findOrFail($this->id_empleado);
             $empleado->update([
                 'numero_documento' => $this->numero_documento,
@@ -34,6 +38,7 @@ new class extends Component {
                 'email' => $this->email,
                 'telefono' => $this->telefono,
                 'fecha_ingreso' => $this->fecha_ingreso,
+                'estado'=>$this->estado
             ]);
         } else {
             Empleado::create([
@@ -47,9 +52,29 @@ new class extends Component {
         }
         $this->limpiarCampos();
         $this->dispatch('actualizar-tabla');
-      
     }
-    public function limpiarCampos() {
+    #[On('abrir-modal-editar')]
+    public function editar($id)
+    {
+        $data=Empleado::findOrFail($id);
+        $this->id_empleado=$data->id;
+        $this->numero_documento=$data->numero_documento;
+        $this->nombre_completo=$data->nombre_completo;
+        $this->apellidos_completos=$data->apellidos_completos;
+        $this->email=$data->email;
+        $this->telefono=$data->telefono;
+        $this->fecha_ingreso=$data->fecha_ingreso;
+        $this->estado=$data->estado;
+
+    }
+    #[On('eliminar-empleado')]
+    public function eliminar($id){
+        $data=Empleado::findOrFail($id);
+        $data->update(['estado'=>'INACTIVO']);
+        $this->dispatch('actualizar-tabla');
+    }
+    public function limpiarCampos()
+    {
         $this->reset();
         $this->resetValidation();
     }
@@ -127,7 +152,9 @@ new class extends Component {
                                             maxlength="15" wire:model="numero_documento">
                                     </div>
                                     <span class="text-danger">
-                                        @error('numero_documento') {{ $message }} @enderror
+                                        @error('numero_documento')
+                                            {{ $message }}
+                                        @enderror
                                     </span>
                                 </div>
 
@@ -146,7 +173,9 @@ new class extends Component {
                                             wire:model="nombre_completo">
                                     </div>
                                     <span class="text-danger">
-                                        @error('nombre_completo') {{ $message }} @enderror
+                                        @error('nombre_completo')
+                                            {{ $message }}
+                                        @enderror
                                     </span>
                                 </div>
 
@@ -165,7 +194,9 @@ new class extends Component {
                                             wire:model="apellidos_completos">
                                     </div>
                                     <span class="text-danger">
-                                        @error('apellidos_completos') {{ $message }} @enderror
+                                        @error('apellidos_completos')
+                                            {{ $message }}
+                                        @enderror
                                     </span>
                                 </div>
 
@@ -184,7 +215,9 @@ new class extends Component {
                                             wire:model="telefono">
                                     </div>
                                     <span class="text-danger">
-                                        @error('telefono') {{ $message }} @enderror
+                                        @error('telefono')
+                                            {{ $message }}
+                                        @enderror
                                     </span>
                                 </div>
 
@@ -228,7 +261,9 @@ new class extends Component {
                                             wire:model="email">
                                     </div>
                                     <span class="text-danger">
-                                        @error('email') {{ $message }} @enderror
+                                        @error('email')
+                                            {{ $message }}
+                                        @enderror
                                     </span>
                                 </div>
 
@@ -246,7 +281,9 @@ new class extends Component {
                                         <input type="date" class="form-control" wire:model="fecha_ingreso">
                                     </div>
                                     <span class="text-danger">
-                                        @error('fecha_ingreso') {{ $message }} @enderror
+                                        @error('fecha_ingreso')
+                                            {{ $message }}
+                                        @enderror
                                     </span>
                                 </div>
 
@@ -258,7 +295,7 @@ new class extends Component {
 
                                     <select class="form-select" wire:model="estado">
                                         <option value="">Seleccione un estado</option>
-                                        <option value="ACTIVADO">Activado</option>
+                                        <option value="ACTIVO">Activado</option>
                                         <option value="INACTIVO">Desactivado</option>
                                     </select>
                                 </div>
@@ -288,3 +325,18 @@ new class extends Component {
         </div>
     </div>
 </div>
+@section('js')
+    <script>
+        document.addEventListener('livewire:init', () => {
+            var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado'))
+            Livewire.on('actualizar-tabla', (event) => {
+                modal.hide();
+            });
+             Livewire.on('abrir-modal-editar', (event) => {
+                modal.show();
+            });
+
+
+        });
+    </script>
+@endsection

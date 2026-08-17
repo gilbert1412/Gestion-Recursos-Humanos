@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email',150)->unique();
             $table->string('telefono',20)->nullable();
             $table->date('fecha_ingreso');
-            $table->enum('estado',['ACTIVADO','INACTIVO'])->default('ACTIVADO');
+            $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
             $table->timestamps();
         });
     }
