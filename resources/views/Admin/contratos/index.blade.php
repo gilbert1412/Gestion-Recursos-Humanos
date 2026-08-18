@@ -21,8 +21,7 @@
 
     <!-- Body -->
     <div class="card-body p-4">
-
-
+        <livewire:contrato.table />
 
     </div>
 

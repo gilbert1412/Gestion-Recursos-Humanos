@@ -19,7 +19,7 @@ class Contrato extends Model
     ];
     #[Scope]
     protected function activos(Builder $query, ?string $buscar){
-        $query->where('activos',true);
+        $query->where('activo',true);
     }
     public function empleado() :BelongsTo
     {
