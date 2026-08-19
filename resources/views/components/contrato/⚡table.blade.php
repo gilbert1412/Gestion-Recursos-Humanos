@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Contrato;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -9,6 +10,7 @@ new class extends Component
     public $listadoEmpleados=[];
     public $buscar;
     #[On('actualizar-tabla')]
+    #[Computed()]
     public function contratos(){
         return Contrato::activos($this->buscar)->get();
     }
@@ -49,7 +51,7 @@ new class extends Component
                 @forelse ($this->contratos() as $item)
                 <tr>
                     <td class="fw-bold">{{ $loop->index }}</td>
-                    <td>{{ $item->empleado_id }}</td>
+                    <td>{{ $item->empleado->nombre_completo }} {{ $item->empleado->apellidos_completos }}</td>
                     <td>{{ $item->tipo_contrato }}</td>
                     <td>{{ $item->fecha_inicio }}</td>
                     <td>{{ $item->fecha_fin }}</td>
@@ -61,12 +63,13 @@ new class extends Component
                         <div class="btn-group">
 
                             <button class="btn btn-warning btn-sm"
-                                wire:click="$dispatch('abrir-modal-editar',{id:{{ $item->id }}})">
+                                wire:click="$dispatch('abrir-modal-editar',{id: {{ $item->id }}})">
+
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
                             <button class="btn btn-danger btn-sm"
-                                wire:click="$dispatch('eliminar-empleado',{id:{{ $item->id }}})"
+                                wire:click="$dispatch('eliminar-contrato',{id: {{ $item->id }}})"
                                 wire:confirm="Esta seguro de que quiere eliminar al Contrato?">
                                 <i class="bi bi-trash-fill"></i>
                             </button>

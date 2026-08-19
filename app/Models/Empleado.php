@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Casts\Attribute; 
 
 class Empleado extends Model
 {
@@ -45,6 +45,8 @@ class Empleado extends Model
     { 
         return $this->hasMany(Contrato::class);
     }
+
+   
    
     
 

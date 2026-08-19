@@ -2,56 +2,124 @@
 
 use App\Models\Contrato;
 use App\Models\Empleado;
+use Carbon\Carbon;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 new class extends Component
 {
-    public $contarto_id,$empleado_id,$tipo_contrato,$fecha_inicio,$fecha_fin,$salario_base,$activo;
-   
-    #[Computed()]
-    public function empleados(){
-     return Empleado::activos()->get();
-   }
+    public $contarto_id, $empleado_id, $tipo_contrato, $fecha_inicio, $fecha_fin, $salario_base, $activo;
 
-   public function validarCampos(){
+    #[Computed()]
+    public function empleados()
+    {
+        return Empleado::activos()->get();
+    }
+
+    public function validarCampos()
+    {
         $this->validate([
-            'empleado_id'=>'required',
-            'tipo_contrato'=>'required',
-            'fecha_inicio'=>'required|date',
-            'fecha_fin'=>'required|date',
-            'salario_base'=>'required|numeric|decimal:2'
+            'empleado_id' => 'required',
+            'tipo_contrato' => 'required',
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date',
+            'salario_base' => 'required|numeric|decimal:2'
         ]);
-   }
-   public function registrarContrato(){
+    }
+    public function registrarContrato()
+    {
+
         $this->validarCampos();
-        if(isset($this->contarto_id)){
-            $contrato=Contrato::findOrFail($this->id);
-            $contrato::update([
-                'empleado_id'=>$this->empleado_id,
-            'tipo_contrato'=>$this->tipo_contrato,
-            'fecha_inicio'=>$this->fecha_inicio,
-            'fecha_fin'=>$this->fecha_fin,
-            'salario_base'=>$this->salario_base
+
+        // Si existe contrato_id, estamos editando
+        if ($this->contarto_id) {
+
+            $contrato = Contrato::findOrFail($this->contarto_id);
+
+            // Verificar si el empleado seleccionado
+            // ya tiene OTRO contrato vigente
+            $contratoVigente = Contrato::where('empleado_id', $this->empleado_id)
+                ->where('id', '!=', $contrato->id)
+                ->whereDate('fecha_fin', '>=', today())
+                ->exists();
+
+            if ($contratoVigente) {
+                $this->addError(
+                    'empleado_id',
+                    'El empleado seleccionado ya tiene otro contrato vigente.'
+                );
+               
+                return;
+            }
+
+            // Actualizar contrato
+            $contrato->update([
+                'empleado_id'   => $this->empleado_id,
+                'tipo_contrato' => $this->tipo_contrato,
+                'fecha_inicio'  => $this->fecha_inicio,
+                'fecha_fin'     => $this->fecha_fin,
+                'salario_base'  => $this->salario_base,
             ]);
-        }else{
-             Contrato::create([
-                'empleado_id'=>$this->empleado_id,
-            'tipo_contrato'=>$this->tipo_contrato,
-            'fecha_inicio'=>$this->fecha_inicio,
-            'fecha_fin'=>$this->fecha_fin,
-            'salario_base'=>$this->salario_base
+        } else {
+
+            // Verificar si el empleado ya tiene un contrato vigente
+            $contratoVigente = Contrato::where('empleado_id', $this->empleado_id)
+                ->whereDate('fecha_fin', '>=', today())
+                ->exists();
+
+            if ($contratoVigente) {
+                $this->addError(
+                    'empleado_id',
+                    'El empleado ya tiene un contrato vigente hasta la fecha de finalización.'
+                );
+              
+                return;
+            }
+
+            // Crear nuevo contrato
+            Contrato::create([
+                'empleado_id'   => $this->empleado_id,
+                'tipo_contrato' => $this->tipo_contrato,
+                'fecha_inicio'  => $this->fecha_inicio,
+                'fecha_fin'     => $this->fecha_fin,
+                'salario_base'  => $this->salario_base,
             ]);
         }
-        $this->dispatch('actualizar-tabla');
+
+
+
         $this->limpiarCampos();
-        
-   }
-   public function limpiarCampos()
-   {
+        $this->dispatch('actualizar-tabla');
+    }
+    #[On('abrir-modal-editar')]
+    public function editar($id)
+    {
+
+        $data = Contrato::findOrFail($id);
+        $this->contarto_id = $data->id;
+        $this->empleado_id = $data->empleado_id;
+        $this->tipo_contrato = $data->tipo_contrato;
+        $this->fecha_inicio = $data->fecha_inicio;
+        $this->fecha_fin = $data->fecha_fin;
+        $this->salario_base = $data->salario_base;
+    }
+    #[On('limpiar-modal')]
+    public function limpiarCampos()
+    {
         $this->reset();
         $this->resetValidation();
-   }
+    }
+    #[On('eliminar-contrato')]
+    public function eliminar($id)
+    {
+        $data = Contrato::findOrFail($id);
+
+        $data->update([
+            'activo' => 0,
+        ]);
+        $this->dispatch('actualizar-tabla');
+    }
 }
 ?>
 
@@ -320,17 +388,18 @@ new class extends Component
     </div>
 </div>
 @section('js')
-<script>
-document.addEventListener('livewire:init', () => {
-    var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalContrato'))
-    Livewire.on('actualizar-tabla', (event) => {
-        modal.hide();
-    });
-    Livewire.on('abrir-modal-editar', (event) => {
-        modal.show();
-    });
-
-
+<script type="module">
+var modalContrato = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalContrato'))
+var modal = document.getElementById('modalContrato')
+Livewire.on('actualizar-tabla', (event) => {
+    modalContrato.hide();
 });
+Livewire.on('abrir-modal-editar', (event) => {
+    modalContrato.show();
+});
+
+modal.addEventListener('hidden.bs.modal', function(event) {
+    Livewire.dispatch('limpiar-modal')
+})
 </script>
 @endsection

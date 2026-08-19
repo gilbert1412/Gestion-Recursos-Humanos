@@ -53,64 +53,64 @@ new class extends Component {
 
             <tbody>
                 @forelse ($this->listadoEmpleados as $empleado)
-                    <tr>
-                        <td class="fw-bold">{{ $loop->index }}</td>
-                        <td>{{ $empleado->numero_documento }}</td>
-                        <td>{{ $empleado->nombre_completo }}</td>
-                        <td>{{ $empleado->apellidos_completos }}</td>
-                        <td>{{ $empleado->email }}</td>
-                        <td>{{ $empleado->telefono }}</td>
-                        <td>{{ $empleado->fecha_ingreso }}</td>
+                <tr>
+                    <td class="fw-bold">{{ $loop->index }}</td>
+                    <td>{{ $empleado->numero_documento }}</td>
+                    <td>{{ $empleado->nombre_completo }}</td>
+                    <td>{{ $empleado->apellidos_completos }}</td>
+                    <td>{{ $empleado->email }}</td>
+                    <td>{{ $empleado->telefono }}</td>
+                    <td>{{ $empleado->fecha_ingreso }}</td>
 
-                        <td>
-                            @if ($empleado->estado === 'ACTIVO')
-                                <span class="badge bg-primary px-3 py-2">
-                                    {{ $empleado->estado }}
-                                </span>
-                            @else
-                                <span class="badge bg-danger px-3 py-2">
-                                    {{ $empleado->estado }}
-                                </span>
-                            @endif
-
-
-                        </td>
-
-                        <td class="text-center">
-
-                            <div class="btn-group">
-
-                                <button class="btn btn-warning btn-sm"
-                                    wire:click="$dispatch('abrir-modal-editar',{id:{{ $empleado->id }}})">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-
-                                <button class="btn btn-danger btn-sm"
-                                    wire:click="$dispatch('eliminar-empleado',{id:{{ $empleado->id }}})"
-                                    wire:confirm="Esta seguro de que quiere eliminar al empleado?">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
+                    <td>
+                        @if ($empleado->estado === 'ACTIVO')
+                        <span class="badge bg-primary px-3 py-2">
+                            {{ $empleado->estado }}
+                        </span>
+                        @else
+                        <span class="badge bg-danger px-3 py-2">
+                            {{ $empleado->estado }}
+                        </span>
+                        @endif
 
 
-                            </div>
+                    </td>
 
-                        </td>
-                    </tr>
+                    <td class="text-center">
+
+                        <div class="btn-group">
+
+                            <button class="btn btn-warning btn-sm"
+                                wire:click="$dispatch('abrir-modal-editar',{id:{{ $empleado->id }}})">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <button class="btn btn-danger btn-sm"
+                                wire:click="$dispatch('eliminar-empleado',{id:{{ $empleado->id }}})"
+                                wire:confirm="Esta seguro de que quiere eliminar al empleado?">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+
+
+                        </div>
+
+                    </td>
+                </tr>
                 @empty
 
-                    <tr>
-                        <td colspan="9" class="text-center py-5">
-                            <i class="bi bi-search fs-1 text-secondary"></i>
+                <tr>
+                    <td colspan="9" class="text-center py-5">
+                        <i class="bi bi-search fs-1 text-secondary"></i>
 
-                            <p class="fw-semibold text-secondary mt-3 mb-1">
-                                No se encontraron registros
-                            </p>
+                        <p class="fw-semibold text-secondary mt-3 mb-1">
+                            No se encontraron registros
+                        </p>
 
-                            <small class="text-muted">
-                                Intenta realizar otra búsqueda.
-                            </small>
-                        </td>
-                    </tr>
+                        <small class="text-muted">
+                            Intenta realizar otra búsqueda.
+                        </small>
+                    </td>
+                </tr>
                 @endforelse
 
 

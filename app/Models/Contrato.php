@@ -15,11 +15,12 @@ class Contrato extends Model
         'tipo_contrato',
         'fecha_inicio',
         'fecha_fin',
-        'salario_base'
+        'salario_base',
+        'activo'
     ];
     #[Scope]
     protected function activos(Builder $query, ?string $buscar){
-        $query->where('activo',true);
+        return $query->where('activo',true);
     }
     public function empleado() :BelongsTo
     {

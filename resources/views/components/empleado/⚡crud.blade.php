@@ -153,7 +153,7 @@ new class extends Component {
                                     </div>
                                     <span class="text-danger">
                                         @error('numero_documento')
-                                            {{ $message }}
+                                        {{ $message }}
                                         @enderror
                                     </span>
                                 </div>
@@ -174,7 +174,7 @@ new class extends Component {
                                     </div>
                                     <span class="text-danger">
                                         @error('nombre_completo')
-                                            {{ $message }}
+                                        {{ $message }}
                                         @enderror
                                     </span>
                                 </div>
@@ -195,7 +195,7 @@ new class extends Component {
                                     </div>
                                     <span class="text-danger">
                                         @error('apellidos_completos')
-                                            {{ $message }}
+                                        {{ $message }}
                                         @enderror
                                     </span>
                                 </div>
@@ -216,7 +216,7 @@ new class extends Component {
                                     </div>
                                     <span class="text-danger">
                                         @error('telefono')
-                                            {{ $message }}
+                                        {{ $message }}
                                         @enderror
                                     </span>
                                 </div>
@@ -262,7 +262,7 @@ new class extends Component {
                                     </div>
                                     <span class="text-danger">
                                         @error('email')
-                                            {{ $message }}
+                                        {{ $message }}
                                         @enderror
                                     </span>
                                 </div>
@@ -282,7 +282,7 @@ new class extends Component {
                                     </div>
                                     <span class="text-danger">
                                         @error('fecha_ingreso')
-                                            {{ $message }}
+                                        {{ $message }}
                                         @enderror
                                     </span>
                                 </div>
@@ -326,17 +326,17 @@ new class extends Component {
     </div>
 </div>
 @section('js')
-    <script>
-        document.addEventListener('livewire:init', () => {
-            var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado'))
-            Livewire.on('actualizar-tabla', (event) => {
-                modal.hide();
-            });
-             Livewire.on('abrir-modal-editar', (event) => {
-                modal.show();
-            });
+<script>
+document.addEventListener('livewire:init', () => {
+    var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado'))
+    Livewire.on('actualizar-tabla', (event) => {
+        modal.hide();
+    });
+    Livewire.on('abrir-modal-editar', (event) => {
+        modal.show();
+    });
 
 
-        });
-    </script>
+});
+</script>
 @endsection
