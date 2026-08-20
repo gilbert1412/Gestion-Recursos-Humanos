@@ -271,6 +271,12 @@
                                 <p>Contratos</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('asistencias')}}" class="nav-link">
+                                <i class="nav-icon bi bi-palette"></i>
+                                <p>asistencias</p>
+                            </a>
+                        </li>
 
                     </ul>
                     <!--end::Sidebar Menu-->
